@@ -185,13 +185,6 @@ details.abstract p{margin:0;padding:0 18px 18px;text-align:justify;hyphens:auto;
 @keyframes fxFlowX{from{transform:translateX(0)}to{transform:translateX(var(--d,120px))}}
 .fx-tok{animation:fxTok 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
 @keyframes fxTok{0%,60%,100%{transform:translateY(0)}20%{transform:translateY(-7px)}40%{transform:translateY(3px)}}
-/* 3-step playhead used by the teaser frame strips (frame 1 → 2 → 3) */
-.fx-step{opacity:0;animation:fxStep 3.6s steps(1,end) infinite}
-@keyframes fxStep{0%{opacity:1}33.33%{opacity:0}100%{opacity:0}}
-.fx-dim{animation:fxDim 3.6s steps(1,end) infinite}
-@keyframes fxDim{0%{opacity:0}33.33%{opacity:.55}100%{opacity:.55}}
-.fx-seq{opacity:.35;animation:fxSeq 2.4s ease-in-out infinite}
-@keyframes fxSeq{0%,100%{opacity:.35}20%,45%{opacity:1}}
 
 /* ---------- method figures ---------- */
 .mfig{display:grid;grid-template-columns:1260fr 720fr;grid-template-areas:"a b" "ca cb";gap:0 18px;align-items:stretch}
@@ -462,7 +455,7 @@ footer{padding:36px 0 48px;text-align:center;color:var(--muted);font-size:13.5px
 [data-theme="dark"] .fig-svg [stroke="#2a2d24"],
 [data-theme="dark"] .fig-svg [stroke="#1B1F14"]{stroke:var(--ink)}
 [data-theme="dark"] .fig-svg [stroke="#D3D6CC"]{stroke:var(--line)}
-[data-theme="dark"] .fig-svg use.fx-seq,
+[data-theme="dark"] .fig-svg use.ink-icon,
 [data-theme="dark"] .fig-svg use[href="#i-robot-o"]{color:var(--ink)}
 [data-theme="dark"] #ah-dark path{fill:var(--ink)}
 [data-theme="dark"] #ah-gray path{fill:#8F9784}
