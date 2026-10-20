@@ -29,13 +29,9 @@ Drop an mp4 with that exact name in place and the page switches from the still o
 | Where on the page | Expected file(s) |
 |---|---|
 | Teaser – input thumbnails | `static/videos/teaser/human_{1,2,3}.mp4`, `robot_{1,2,3}.mp4` |
-| Teaser – video transfer strip | `static/videos/teaser/video_transfer_source.mp4`, `video_transfer_target.mp4` |
-| Teaser – action transfer strip | `static/videos/teaser/action_transfer_human.mp4`, `action_transfer_robot.mp4` |
 | Teaser – universal across embodiments | `static/videos/teaser/universal_human.mp4`, `universal_robot.mp4` |
 | Teaser – policy scene | `static/videos/teaser/policy_sim.mp4` |
 | Attention maps | `static/videos/attention/human.mp4`, `robot.mp4` (input and overlay side by side, 2:1) |
-
-Clips in the teaser strips play as three copies offset by ⅓ of the clip length, which mimics the three-frame strip.
 
 ## Dataset sample clips
 Each dataset card plays its clips one after another. The clip list and captions live in `DATASETS` in `static/js/main.js`.
