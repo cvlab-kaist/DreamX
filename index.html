@@ -117,11 +117,11 @@
       <a href="#overview">Overview</a>
       <a href="#method">Method</a>
       <a href="#data">Data</a>
+      <a href="#numbers">Results</a>
       <a href="#video-transfer">Video transfer</a>
       <a href="#action-transfer">Action transfer</a>
       <a href="#attention">Attention</a>
       <a href="#policy">Policy</a>
-      <a href="#numbers">Results</a>
       <a href="#bibtex">BibTeX</a>
     </nav>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to night mode" title="Day / night">
@@ -682,9 +682,63 @@
 </section>
 
 <!-- =========================================================
+     QUANTITATIVE — LARYBench
+     ========================================================= -->
+<section class="band" id="numbers">
+  <div class="wide">
+    <p class="eyebrow">Quantitative results</p>
+    <h2>State of the art on LARYBench</h2>
+    <p class="lead">LARYBench asks whether a latent action keeps enough fine-grained motion to regress end-effector trajectories, and enough semantics to classify motions. DreamX leads every benchmark, and its 32-channel compressed codes (FAE-32) still beat all baselines.</p>
+
+    <div class="charts" id="lary">
+      <div class="card chart">
+        <h3>Action regression</h3>
+        <div class="sub">Normalized MSE, average of 4 benchmarks (lower is better)</div>
+        <div class="bars" data-max="1.0" data-digits="2" data-rows='[["LAPA",0.97],["UniVLA",0.87],["villa-X",0.87],["LAPA-DINOv3",0.60],["AdaWorld",0.69],["VideoWorld2",0.70],["MoTo",0.44],["DiLA",0.38],["DreamX",0.17,1]]'></div>
+      </div>
+      <div class="card chart">
+        <h3>Action classification</h3>
+        <div class="sub">Accuracy %, average of 3 benchmarks (higher is better)</div>
+        <div class="bars" data-max="100" data-digits="1" data-rows='[["LAPA",20.17],["UniVLA",18.75],["villa-X",20.90],["LAPA-DINOv3",49.17],["AdaWorld",44.29],["VideoWorld2",27.37],["MoTo",51.01],["DiLA",62.25],["DreamX",69.67,1]]'></div>
+      </div>
+    </div>
+
+    <details class="more">
+      <summary>Show the full LARYBench table</summary>
+      <div class="card tbl-wrap" style="margin-top:10px">
+        <table>
+          <thead>
+            <tr><th></th><th colspan="5" style="text-align:center">Action regression (MSE ↓)</th><th colspan="4" style="text-align:center">Action classification (acc. % ↑)</th></tr>
+            <tr><th>Method</th><th>CALVIN</th><th>VLABench</th><th>RoboCOIN</th><th>AgiBotWorld-β</th><th>Avg.</th><th>Atomic robot</th><th>Comp. human</th><th>Comp. robot</th><th>Avg.</th></tr>
+          </thead>
+          <tbody>
+            <tr class="grp"><td colspan="10">Latent actions from 2 frames</td></tr>
+            <tr><td>LAPA</td><td>0.96</td><td>0.95</td><td>0.96</td><td>1.00</td><td>0.97</td><td>22.27</td><td>14.61</td><td>23.64</td><td>20.17</td></tr>
+            <tr><td>UniVLA</td><td>0.82</td><td>0.74</td><td>0.94</td><td>0.97</td><td>0.87</td><td>18.62</td><td>19.08</td><td>18.56</td><td>18.75</td></tr>
+            <tr><td>villa-X</td><td>0.86</td><td>0.72</td><td>0.94</td><td>0.97</td><td>0.87</td><td>15.00</td><td>17.80</td><td>29.90</td><td>20.90</td></tr>
+            <tr><td>LAPA-MAGVIT2</td><td>0.59</td><td>0.36</td><td>0.80</td><td>0.83</td><td>0.65</td><td>33.12</td><td>59.70</td><td>29.53</td><td>40.78</td></tr>
+            <tr><td>LAPA-SigLIP2</td><td>0.57</td><td>0.30</td><td>0.86</td><td>0.88</td><td>0.65</td><td>46.83</td><td>54.74</td><td>29.44</td><td>43.67</td></tr>
+            <tr><td>LAPA-DINOv2</td><td>0.55</td><td>0.26</td><td>0.85</td><td>0.86</td><td>0.63</td><td>58.04</td><td>55.86</td><td>34.19</td><td>49.36</td></tr>
+            <tr><td>LAPA-DINOv3</td><td>0.50</td><td>0.25</td><td>0.82</td><td>0.84</td><td>0.60</td><td>56.27</td><td>64.19</td><td>27.04</td><td>49.17</td></tr>
+            <tr class="grp"><td colspan="10">Latent actions from video</td></tr>
+            <tr><td>MoTo</td><td>0.43</td><td>0.13</td><td>0.54</td><td>0.68</td><td>0.44</td><td>41.57</td><td>55.11</td><td>56.34</td><td>51.01</td></tr>
+            <tr><td>AdaWorld</td><td>0.64</td><td>0.26</td><td>0.94</td><td>0.94</td><td>0.69</td><td>31.58</td><td>49.80</td><td>51.48</td><td>44.29</td></tr>
+            <tr><td>VideoWorld2</td><td>0.72</td><td>0.41</td><td>0.82</td><td>0.85</td><td>0.70</td><td>14.50</td><td>30.24</td><td>37.36</td><td>27.37</td></tr>
+            <tr><td>DiLA</td><td>0.43</td><td>0.09</td><td>0.51</td><td>0.52</td><td>0.38</td><td>58.51</td><td>65.47</td><td>62.76</td><td>62.25</td></tr>
+            <tr class="ours"><td>DreamX</td><td>0.15</td><td>0.05</td><td>0.26</td><td>0.22</td><td>0.17</td><td>68.03</td><td>72.72</td><td>68.26</td><td>69.67</td></tr>
+            <tr><td>DreamX + FAE-32</td><td>0.23</td><td>0.07</td><td>0.31</td><td>0.26</td><td>0.22</td><td>65.90</td><td>69.49</td><td>66.06</td><td>67.15</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </div>
+</section>
+
+
+<!-- =========================================================
      VIDEO TRANSFER — downstream (a), video path
      ========================================================= -->
-<section class="band" id="video-transfer">
+<section id="video-transfer">
   <div class="wide">
     <p class="eyebrow">Motion transfer · video</p>
     <h2>Video transfer</h2>
@@ -811,29 +865,45 @@
       <button class="pill" aria-selected="false" data-task="fig11_writing">Write with marker</button>
     </div>
 
-    <div class="xblock vgroup sync" id="hr-group">
-      <div class="cmp-top">
-        <div class="tile"><video data-k="human" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">Human · source</span></div></div>
-        <div class="flow" aria-hidden="true"><div class="q">Q</div><svg viewBox="0 0 44 14"><path d="M3 7 H35"/><path class="head" d="M30 2 L37 7 L30 12"/></svg><span>zero-shot</span></div>
-        <div class="tile ours"><video data-k="ours" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind ours">DreamX (ours)</span></div></div>
+    <div class="hr-layout">
+      <div class="xblock vgroup sync hr-vids" id="hr-group">
+        <div class="cmp-scroll">
+          <div class="hr-rows">
+            <div class="hr-row">
+              <span class="hr-lbl">Source</span>
+              <div class="hr-src">
+                <div class="tile"><video data-k="human" width="854" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">Human</span></div></div>
+              </div>
+            </div>
+            <div class="hr-row hr-arrow" aria-hidden="true">
+              <span></span>
+              <div class="hr-down"><svg viewBox="0 0 14 22"><path d="M7 2 V15"/><path class="head" d="M2 11 L7 18 L12 11"/></svg></div>
+            </div>
+            <div class="hr-row">
+              <span class="hr-lbl">Generated</span>
+              <div class="cmp-gen">
+                <div class="tile"><video data-k="adaworld" width="480" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">AdaWorld</span></div></div>
+                <div class="tile"><video data-k="videoworld2" width="832" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">VideoWorld2</span></div></div>
+                <div class="tile ours"><video data-k="ours" width="640" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind ours">DreamX (ours)</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <p class="cmp-label">Baselines</p>
-      <div class="cmp-base">
-        <div class="tile"><video data-k="adaworld" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">AdaWorld</span></div></div>
-        <div class="tile"><video data-k="videoworld2" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">VideoWorld2</span></div></div>
-      </div>
-    </div>
 
-    <div class="card metrics">
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>Method</th><th>FVD ↓</th><th>LPIPS ↓</th><th>PSNR ↑</th><th>SSIM ↑</th></tr></thead>
-          <tbody>
-            <tr><td>AdaWorld</td><td>170.19</td><td>0.344</td><td>22.95</td><td>0.846</td></tr>
-            <tr><td>VideoWorld2</td><td>241.92</td><td>0.299</td><td>22.53</td><td>0.881</td></tr>
-            <tr class="ours"><td>DreamX</td><td>57.44</td><td>0.179</td><td>26.52</td><td>0.917</td></tr>
-          </tbody>
-        </table>
+      <div class="card hr-metrics">
+        <h4>HumanAndRobot benchmark</h4>
+        <div class="sub">↓ lower is better · ↑ higher is better</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>FVD ↓</th><th>LPIPS ↓</th><th>PSNR ↑</th><th>SSIM ↑</th></tr></thead>
+            <tbody>
+              <tr><td>AdaWorld</td><td>170.19</td><td>0.344</td><td>22.95</td><td>0.846</td></tr>
+              <tr><td>VideoWorld2</td><td>241.92</td><td>0.299</td><td>22.53</td><td>0.881</td></tr>
+              <tr class="ours"><td>DreamX</td><td>57.44</td><td>0.179</td><td>26.52</td><td>0.917</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -843,7 +913,7 @@
 <!-- =========================================================
      ACTION TRANSFER — downstream (a), action path
      ========================================================= -->
-<section id="action-transfer">
+<section class="band" id="action-transfer">
   <div class="wide">
     <p class="eyebrow">Motion transfer · action</p>
     <h2>Action transfer</h2>
@@ -965,52 +1035,41 @@
 </section>
 
 <!-- =========================================================
-     ATTENTION MAP VISUALIZATION  (auto-upgrading placeholders)
-     Drop static/videos/attention/human.mp4 and robot.mp4
-     (input | attention overlay, side-by-side) and they appear.
+     ATTENTION MAP VISUALIZATION
+     One clip at a time, picked with the pills (data-id; data-w/h = video size,
+     so each clip keeps its source aspect ratio):
+     static/videos/attention/<id>.mp4 = input (left) | attention (right),
+     posters static/posters/att_<id>.jpg
+     (human = EgoVerse, arm1 = Bridge, arm2 = BimanualYAM).
      ========================================================= -->
-<section class="band" id="attention">
+<section id="attention">
   <div class="wide">
     <p class="eyebrow">Analysis</p>
     <h2>Where do latent actions look?</h2>
-    <p class="lead">Query-to-video attention during encoding. The latent-action queries focus on the hands and grippers in contact with objects, for both humans and robots. They read out the action-relevant regions instead of the background.</p>
-    <div class="att-grid">
-      <div class="att-card">
-        <h4><span class="chip h">Human demonstration</span></h4>
-        <div class="slot ratio-2x1" data-video="static/videos/attention/human.mp4" style="border-radius:12px">
-          <div class="placeholder" style="position:absolute;inset:0">
-            <span class="ph-tag">Placeholder</span>
-            <div class="ph-inner">
-              <div class="ph-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7" opacity=".5"/><circle cx="12" cy="12" r="10.5" opacity=".25"/></svg></div>
-              <div class="ph-title">Attention map visualization</div>
-              <div class="ph-sub"><code>static/videos/attention/human.mp4</code></div>
-            </div>
-          </div>
-        </div>
-        <div class="att-split"><span>Input video</span><span>Query → video attention</span></div>
-      </div>
-      <div class="att-card">
-        <h4><span class="chip r">Robot demonstration</span></h4>
-        <div class="slot ratio-2x1" data-video="static/videos/attention/robot.mp4" style="border-radius:12px">
-          <div class="placeholder" style="position:absolute;inset:0">
-            <span class="ph-tag">Placeholder</span>
-            <div class="ph-inner">
-              <div class="ph-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7" opacity=".5"/><circle cx="12" cy="12" r="10.5" opacity=".25"/></svg></div>
-              <div class="ph-title">Attention map visualization</div>
-              <div class="ph-sub"><code>static/videos/attention/robot.mp4</code></div>
-            </div>
-          </div>
-        </div>
-        <div class="att-split"><span>Input video</span><span>Query → video attention</span></div>
-      </div>
+    <p class="lead">Query-to-video attention during encoding. The latent-action queries follow the moving hand or gripper over time, for humans, single-arm robots and bimanual robots alike. They read out the action-relevant regions instead of the background.</p>
+    <div class="pills" id="att-pills" role="tablist" aria-label="Embodiment">
+      <button class="pill" role="tab" aria-selected="true"  data-id="human" data-w="1708" data-h="480">Human</button>
+      <button class="pill" role="tab" aria-selected="false" data-id="arm1" data-w="1280" data-h="480">Single-arm robot</button>
+      <button class="pill" role="tab" aria-selected="false" data-id="arm2" data-w="1708" data-h="480">Bimanual robot</button>
     </div>
+    <figure class="card att-fig">
+      <div class="vgroup" id="att-group">
+        <div class="tile att-tile">
+          <video id="att-video" width="1708" height="480" muted loop playsinline preload="none" aria-label="Input video (left) and query-to-video attention (right)"></video>
+          <div class="tag"><span class="kind">Input</span></div>
+          <div class="tag right"><span class="kind">Attention</span></div>
+        </div>
+        <div class="att-gauge" aria-hidden="true"><span id="att-gauge-fill"></span></div>
+      </div>
+      <figcaption>Input video (left) and the attention of one latent-action query slot overlaid on it (right; brighter means higher), over six native time steps. The bar shows playback progress. Each clip uses a single layer and slot, and colors are scaled per clip.</figcaption>
+    </figure>
   </div>
 </section>
 
 <!-- =========================================================
      POLICY — downstream (b), web-native + animated
      ========================================================= -->
-<section id="policy">
+<section class="band" id="policy">
   <div class="wide">
     <p class="eyebrow">Control</p>
     <h2>A compact latent policy</h2>
@@ -1122,60 +1181,6 @@
     </div>
   </div>
 </section>
-
-<!-- =========================================================
-     QUANTITATIVE — LARYBench
-     ========================================================= -->
-<section class="band" id="numbers">
-  <div class="wide">
-    <p class="eyebrow">Quantitative results</p>
-    <h2>State of the art on LARYBench</h2>
-    <p class="lead">LARYBench asks whether a latent action keeps enough fine-grained motion to regress end-effector trajectories, and enough semantics to classify motions. DreamX leads every benchmark, and its 32-channel compressed codes (FAE-32) still beat all baselines.</p>
-
-    <div class="charts" id="lary">
-      <div class="card chart">
-        <h3>Action regression</h3>
-        <div class="sub">Normalized MSE, average of 4 benchmarks (lower is better)</div>
-        <div class="bars" data-max="1.0" data-digits="2" data-rows='[["LAPA",0.97],["UniVLA",0.87],["villa-X",0.87],["LAPA-DINOv3",0.60],["AdaWorld",0.69],["VideoWorld2",0.70],["MoTo",0.44],["DiLA",0.38],["DreamX",0.17,1]]'></div>
-      </div>
-      <div class="card chart">
-        <h3>Action classification</h3>
-        <div class="sub">Accuracy %, average of 3 benchmarks (higher is better)</div>
-        <div class="bars" data-max="100" data-digits="1" data-rows='[["LAPA",20.17],["UniVLA",18.75],["villa-X",20.90],["LAPA-DINOv3",49.17],["AdaWorld",44.29],["VideoWorld2",27.37],["MoTo",51.01],["DiLA",62.25],["DreamX",69.67,1]]'></div>
-      </div>
-    </div>
-
-    <details class="more">
-      <summary>Show the full LARYBench table</summary>
-      <div class="card tbl-wrap" style="margin-top:10px">
-        <table>
-          <thead>
-            <tr><th></th><th colspan="5" style="text-align:center">Action regression (MSE ↓)</th><th colspan="4" style="text-align:center">Action classification (acc. % ↑)</th></tr>
-            <tr><th>Method</th><th>CALVIN</th><th>VLABench</th><th>RoboCOIN</th><th>AgiBotWorld-β</th><th>Avg.</th><th>Atomic robot</th><th>Comp. human</th><th>Comp. robot</th><th>Avg.</th></tr>
-          </thead>
-          <tbody>
-            <tr class="grp"><td colspan="10">Latent actions from 2 frames</td></tr>
-            <tr><td>LAPA</td><td>0.96</td><td>0.95</td><td>0.96</td><td>1.00</td><td>0.97</td><td>22.27</td><td>14.61</td><td>23.64</td><td>20.17</td></tr>
-            <tr><td>UniVLA</td><td>0.82</td><td>0.74</td><td>0.94</td><td>0.97</td><td>0.87</td><td>18.62</td><td>19.08</td><td>18.56</td><td>18.75</td></tr>
-            <tr><td>villa-X</td><td>0.86</td><td>0.72</td><td>0.94</td><td>0.97</td><td>0.87</td><td>15.00</td><td>17.80</td><td>29.90</td><td>20.90</td></tr>
-            <tr><td>LAPA-MAGVIT2</td><td>0.59</td><td>0.36</td><td>0.80</td><td>0.83</td><td>0.65</td><td>33.12</td><td>59.70</td><td>29.53</td><td>40.78</td></tr>
-            <tr><td>LAPA-SigLIP2</td><td>0.57</td><td>0.30</td><td>0.86</td><td>0.88</td><td>0.65</td><td>46.83</td><td>54.74</td><td>29.44</td><td>43.67</td></tr>
-            <tr><td>LAPA-DINOv2</td><td>0.55</td><td>0.26</td><td>0.85</td><td>0.86</td><td>0.63</td><td>58.04</td><td>55.86</td><td>34.19</td><td>49.36</td></tr>
-            <tr><td>LAPA-DINOv3</td><td>0.50</td><td>0.25</td><td>0.82</td><td>0.84</td><td>0.60</td><td>56.27</td><td>64.19</td><td>27.04</td><td>49.17</td></tr>
-            <tr class="grp"><td colspan="10">Latent actions from video</td></tr>
-            <tr><td>MoTo</td><td>0.43</td><td>0.13</td><td>0.54</td><td>0.68</td><td>0.44</td><td>41.57</td><td>55.11</td><td>56.34</td><td>51.01</td></tr>
-            <tr><td>AdaWorld</td><td>0.64</td><td>0.26</td><td>0.94</td><td>0.94</td><td>0.69</td><td>31.58</td><td>49.80</td><td>51.48</td><td>44.29</td></tr>
-            <tr><td>VideoWorld2</td><td>0.72</td><td>0.41</td><td>0.82</td><td>0.85</td><td>0.70</td><td>14.50</td><td>30.24</td><td>37.36</td><td>27.37</td></tr>
-            <tr><td>DiLA</td><td>0.43</td><td>0.09</td><td>0.51</td><td>0.52</td><td>0.38</td><td>58.51</td><td>65.47</td><td>62.76</td><td>62.25</td></tr>
-            <tr class="ours"><td>DreamX</td><td>0.15</td><td>0.05</td><td>0.26</td><td>0.22</td><td>0.17</td><td>68.03</td><td>72.72</td><td>68.26</td><td>69.67</td></tr>
-            <tr><td>DreamX + FAE-32</td><td>0.23</td><td>0.07</td><td>0.31</td><td>0.26</td><td>0.22</td><td>65.90</td><td>69.49</td><td>66.06</td><td>67.15</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </details>
-  </div>
-</section>
-
 
 <!-- =========================================================
      BIBTEX

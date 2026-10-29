@@ -251,6 +251,32 @@
     [human, robot].forEach(function (v) { v.currentTime = 0; play(v); });
   });
 
+  /* ---------------- attention maps: one clip at a time + progress gauge ---------------- */
+  var attGroup = $('#att-group'), attPills = $('#att-pills'), attVid = $('#att-video'), attFill = $('#att-gauge-fill');
+  function setAtt(b) {
+    var id = b.dataset.id;
+    attVid.width = +b.dataset.w; attVid.height = +b.dataset.h;   // clips keep their source aspect ratio
+    attVid.dataset.src = 'static/videos/attention/' + id + '.mp4';
+    attVid.poster = 'static/posters/att_' + id + '.jpg';
+    attFill.style.width = '0%';
+    if (attGroup._visible) loadGroup(attGroup);
+  }
+  setAtt($('.pill[aria-selected=true]', attPills));
+  attPills.addEventListener('click', function (e) {
+    var b = e.target.closest('.pill'); if (!b) return;
+    select(attPills, b); setAtt(b);
+  });
+  (function () {
+    var raf = 0;
+    function paint() {
+      var d = attVid.duration;
+      attFill.style.width = (d ? Math.min(100, attVid.currentTime / d * 100) : 0) + '%';
+      raf = attVid.paused ? 0 : requestAnimationFrame(paint);
+    }
+    attVid.addEventListener('play', function () { if (!raf) raf = requestAnimationFrame(paint); });
+    attVid.addEventListener('seeked', paint);
+  })();
+
   /* ---------------- datasets: donut + cards ---------------- */
   function setupClips(el, d) {
     var v = $('video', el), task = $('.ds-task', el), dots = $$('.ds-dots button', el), cur = 0, visible = false;
