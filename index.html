@@ -864,11 +864,16 @@
       <button class="pill" aria-selected="false" data-task="fig11_writing">Write with marker</button>
     </div>
 
-    <div class="hr-split vgroup sync" id="hr-group">
-      <div class="hr-left">
-        <p class="hr-colhead">Source</p>
-        <div class="tile hr-src-tile"><video data-k="human" width="854" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">Human</span></div></div>
-  <div class="card hr-metrics">
+    <div class="hr-grid vgroup sync" id="hr-group">
+      <div class="hr-top">
+        <div class="tile"><video data-k="human" width="854" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">Human · source</span></div></div>
+        <div class="flow" aria-hidden="true"><div class="q">Q</div><svg viewBox="0 0 44 14"><path d="M3 7 H35"/><path class="head" d="M30 2 L37 7 L30 12"/></svg><span>zero-shot</span></div>
+        <div class="tile ours"><video data-k="ours" width="640" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind ours">DreamX (ours)</span></div></div>
+      </div>
+      <div class="hr-bottom">
+        <div class="tile"><video data-k="adaworld" width="480" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">AdaWorld</span></div></div>
+        <div class="tile"><video data-k="videoworld2" width="832" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">VideoWorld2</span></div></div>
+        <div class="card hr-metrics">
           <h4>HumanAndRobot benchmark</h4>
           <div class="sub">↓ lower is better · ↑ higher is better</div>
           <div class="tbl-wrap">
@@ -882,12 +887,6 @@
             </table>
           </div>
         </div>
-      </div>
-      <div class="hr-right">
-        <p class="hr-colhead">Zero-shot transfer</p>
-        <div class="tile ours"><video data-k="ours" width="640" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind ours">DreamX (ours)</span></div></div>
-        <div class="tile"><video data-k="adaworld" width="480" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">AdaWorld</span></div></div>
-        <div class="tile"><video data-k="videoworld2" width="832" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">VideoWorld2</span></div></div>
       </div>
     </div>
 
@@ -1170,7 +1169,7 @@
      BIBTEX
      ========================================================= -->
 <section id="bibtex">
-  <div class="wrap">
+  <div class="wide">
     <p class="eyebrow">Citation</p>
     <h2>BibTeX</h2>
     <!-- TODO: update venue / arXiv id -->
@@ -1186,7 +1185,7 @@
 </main>
 
 <footer>
-  <div class="wrap">DreamX project page · draft</div>
+  <div class="wide">DreamX project page · draft</div>
 </footer>
 
 <script src="static/js/main.js"></script>
