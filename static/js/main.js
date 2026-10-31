@@ -10,22 +10,22 @@
   /* ---------------- data ---------------- */
   var A2A_EXAMPLES = {
     scene: [
-      { id: 'fig04_ex1', src: ['r', 'Bridge WidowX'], tgt: ['r', 'Bridge WidowX · different kitchen'], fig: 'Fig. 4' },
+      { id: 'fig04_ex1', src: ['r', 'Bridge WidowX'], tgt: ['r', 'Bridge WidowX · different kitchen'] },
       { id: 'fig10_ex1', src: ['r', 'Bridge WidowX'], tgt: ['r', 'Bridge WidowX'] },
       { id: 'fig10_ex2', src: ['r', 'Bridge WidowX'], tgt: ['r', 'Bridge WidowX'] }
     ],
     robot: [
-      { id: 'fig04_ex2', src: ['r', 'Bimanual YAM'], tgt: ['r', 'AgiBot'], fig: 'Fig. 4' },
+      { id: 'fig04_ex2', src: ['r', 'Bimanual YAM'], tgt: ['r', 'AgiBot'] },
       { id: 'fig10_ex3', src: ['r', 'Bimanual YAM'], tgt: ['r', 'Bridge WidowX'] },
       { id: 'fig10_ex4', src: ['r', 'AgiBot'], tgt: ['r', 'Bimanual YAM'] }
     ],
     human: [
-      { id: 'fig04_ex3', src: ['h', 'Human (egocentric)'], tgt: ['r', 'Bridge WidowX'], fig: 'Fig. 4' },
+      { id: 'fig04_ex3', src: ['h', 'Human (egocentric)'], tgt: ['r', 'Bridge WidowX'] },
       { id: 'fig10_ex5', src: ['h', 'Human (egocentric)'], tgt: ['r', 'Bridge WidowX'] },
-      { id: 'fig10_ex6', src: ['h', 'Human (EgoVerse)'], tgt: ['r', 'Bimanual YAM'], wideSrc: true }
+      { id: 'fig10_ex6', src: ['h', 'Human (EgoVerse)'], tgt: ['r', 'Bimanual YAM'] }
     ],
     general: [
-      { id: 'fig04_ex4', src: ['h', 'Human hand, open / close'], tgt: ['o', 'Dog in a sunflower field'], fig: 'Fig. 4' }
+      { id: 'fig04_ex4', src: ['h', 'Human hand, open / close'], tgt: ['o', 'Dog in a sunflower field'] }
     ]
   };
 
@@ -78,7 +78,20 @@
   /* ---------------- helpers ---------------- */
   function $(s, r) { return (r || document).querySelector(s); }
   function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
-  function play(v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+  /* play() with intent tracking: if the first attempt fails because data is not
+     there yet (common right after a reload), try again on 'canplay'. Autoplay
+     blocked by the browser (NotAllowedError) is left alone: poster + controls stay. */
+  function play(v) {
+    v._wantPlay = true;
+    var p = v.play();
+    if (p && p.catch) p.catch(function (err) {
+      if (err && err.name === 'NotAllowedError') return;
+      v.addEventListener('canplay', function () {
+        if (v._wantPlay && v.paused) { var q = v.play(); if (q && q.catch) q.catch(function () {}); }
+      }, { once: true });
+    });
+  }
+  function pause(v) { v._wantPlay = false; v.pause(); }
   var SVGNS = 'http://www.w3.org/2000/svg';
   function svgEl(tag, attrs) {
     var e = document.createElementNS(SVGNS, tag);
@@ -97,7 +110,7 @@
       play(v);
     });
   }
-  function pauseGroup(g) { $$('video', g).forEach(function (v) { v.pause(); }); }
+  function pauseGroup(g) { $$('video', g).forEach(pause); }
   function attachSync(g) {
     if (g._synced) return; g._synced = true;
     var vids = $$('video', g), lead = vids[0];
@@ -124,13 +137,32 @@
   /* ---------------- auto-upgrading media slots ----------------
      <div class="slot" data-video="path.mp4"> shows its placeholder until the
      file exists; then the video takes over. Nothing to change in HTML. */
-  function probeVideo(url, onReady) {
-    var v = document.createElement('video');
-    v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline', '');
+  function probeVideo(url, mount, onReady, onGiveUp) {
+    var v = document.createElement('video'), done = false, tries = 0;
+    v.muted = true; v.defaultMuted = true; v.loop = true; v.autoplay = true; v.playsInline = true;
+    v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('autoplay', '');
     v.preload = 'auto';
-    v.addEventListener('loadeddata', function () { onReady(v); }, { once: true });
-    v.addEventListener('error', function () {}, { once: true });
+    v.style.visibility = 'hidden';
+    function ready() {
+      if (done) return; done = true;
+      v.style.visibility = '';
+      onReady(v);
+      play(v);
+    }
+    v.addEventListener('loadeddata', ready);
+    v.addEventListener('canplay', ready);
+    v.addEventListener('error', function () {
+      var code = v.error && v.error.code;
+      if (code === 2 && tries < 2) {                 /* network hiccup: try again */
+        tries++; setTimeout(function () { v.load(); }, 1500 * tries);
+        return;
+      }
+      if (v.parentNode) v.parentNode.removeChild(v); /* file not there: keep the placeholder */
+      if (onGiveUp) onGiveUp();
+    });
+    mount(v);
     v.src = url;
+    if (v.readyState >= 2) ready();
     return v;
   }
   function upgradeSlot(slot) {
@@ -138,17 +170,16 @@
     probeVideo(slot.dataset.video, function (v) {
       if (slot.hasAttribute('data-controls')) { v.controls = true; v.style.objectFit = 'contain'; }
       slot.appendChild(v);
-      slot.classList.add('live');
-      play(v);
-    });
+    }, function () { slot.classList.add('live'); });
   }
   var slotIO = hasIO ? new IntersectionObserver(function (es) {
     es.forEach(function (e) {
       if (e.isIntersecting) upgradeSlot(e.target);
       var v = $('video', e.target);
-      if (v && !v.controls) { if (e.isIntersecting) play(v); else v.pause(); }
+      if (v && !v.controls && slot_live(e.target)) { if (e.isIntersecting) play(v); else pause(v); }
     });
   }, { rootMargin: '300px 0px' }) : null;
+  function slot_live(s) { return s.classList.contains('live'); }
   function watchSlot(s) { if (slotIO) slotIO.observe(s); else upgradeSlot(s); }
 
   /* ---------------- teaser: overlay videos on SVG photo slots ---------------- */
@@ -158,20 +189,20 @@
     var vb = svg.viewBox.baseVal;
     $$('svg.tslot[data-video]', svg).forEach(function (s) {
       var x = s.x.baseVal.value, y = s.y.baseVal.value, w = s.width.baseVal.value, h = s.height.baseVal.value;
+      var ov = document.createElement('div');
+      ov.className = 'ov';
+      ov.style.left = ((x - vb.x) / vb.width * 100) + '%';
+      ov.style.top = ((y - vb.y) / vb.height * 100) + '%';
+      ov.style.width = (w / vb.width * 100) + '%';
+      ov.style.height = (h / vb.height * 100) + '%';
       probeVideo(s.getAttribute('data-video'), function (v) {
-        var off = parseFloat(s.getAttribute('data-offset') || '0');
-        if (off > 0 && isFinite(v.duration)) v.currentTime = off * v.duration;
-        var ov = document.createElement('div');
-        ov.className = 'ov';
-        ov.style.left = ((x - vb.x) / vb.width * 100) + '%';
-        ov.style.top = ((y - vb.y) / vb.height * 100) + '%';
-        ov.style.width = (w / vb.width * 100) + '%';
-        ov.style.height = (h / vb.height * 100) + '%';
         ov.appendChild(v);
         panel.appendChild(ov);
+      }, function (v) {
+        var off = parseFloat(s.getAttribute('data-offset') || '0');
+        if (off > 0 && isFinite(v.duration)) v.currentTime = off * v.duration;
         s.style.visibility = 'hidden';
-        play(v);
-      });
+      }, function () { if (ov.parentNode) ov.parentNode.removeChild(ov); });
     });
   });
 
@@ -182,20 +213,19 @@
     return '<div class="tile' + (ours ? ' ours' : '') + '"><video data-src="' + src + '" poster="' + poster + '" muted loop playsinline preload="none"></video>' +
       '<div class="tag"><span class="kind' + (ours ? ' ours' : '') + '">' + kind + '</span></div></div>';
   }
-  function a2aBlock(ex, feature) {
+  /* every example gets the same card and the same tile size (tiles letterbox, never crop) */
+  function a2aBlock(ex) {
     var base = 'static/videos/any2any/' + ex.id, pb = 'static/posters/' + ex.id;
-    return '<div class="xblock' + (feature ? ' feature' : '') + '">' +
-      '<div class="xmeta">' + chip(ex.src) + '<span class="arrow">→</span>' + chip(ex.tgt) + (ex.fig ? '<span class="fig">' + ex.fig + '</span>' : '') + '</div>' +
-      '<div class="xpair vgroup sync' + (ex.wideSrc ? ' wide-src' : '') + '">' +
+    return '<div class="xblock">' +
+      '<div class="xmeta">' + chip(ex.src) + '<span class="arrow">→</span>' + chip(ex.tgt) + '</div>' +
+      '<div class="xpair vgroup sync">' +
         tile(base + '_source.mp4', pb + '_source.jpg', 'Source', false) + FLOW +
         tile(base + '_target.mp4', pb + '_target.jpg', 'Transferred', true) +
       '</div></div>';
   }
   $$('[data-a2a]').forEach(function (panel) {
     var list = A2A_EXAMPLES[panel.dataset.a2a] || [];
-    var html = list.length ? a2aBlock(list[0], true) : '';
-    if (list.length > 1) html += '<div class="xgrid">' + list.slice(1).map(function (ex) { return a2aBlock(ex, false); }).join('') + '</div>';
-    panel.innerHTML = html;
+    panel.innerHTML = '<div class="xgrid">' + list.map(a2aBlock).join('') + '</div>';
   });
 
   /* tabs */
@@ -206,7 +236,7 @@
         var on = o === t, p = document.getElementById(o.getAttribute('aria-controls'));
         o.setAttribute('aria-selected', on ? 'true' : 'false');
         p.hidden = !on;
-        if (!on) $$('video', p).forEach(function (v) { v.pause(); });
+        if (!on) $$('video', p).forEach(pause);
       });
     });
   });
@@ -294,7 +324,7 @@
     var start = function () { visible = true; if (!v.getAttribute('src')) show(0, true); else play(v); };
     if (hasIO) {
       new IntersectionObserver(function (es) {
-        if (es[0].isIntersecting) start(); else { visible = false; v.pause(); }
+        if (es[0].isIntersecting) start(); else { visible = false; pause(v); }
       }, { rootMargin: '200px 0px' }).observe(el);
     } else start();
   }
@@ -487,6 +517,34 @@
       if (mq.addEventListener) mq.addEventListener('change', onChange); else if (mq.addListener) mq.addListener(onChange);
     }
   })();
+
+  /* ---------------- overview video: make sure it actually starts ----------------
+     Autoplay can stall after a reload (data not ready yet, tab opened in the
+     background, page restored from the back/forward cache, a dropped request).
+     Keep nudging it until it plays, but never override a pause by the viewer. */
+  (function () {
+    var v = $('.teaser-video'); if (!v) return;
+    var userPaused = false, tries = 0;
+    v.addEventListener('pause', function () {
+      if (!document.hidden && !v.ended && v.readyState > 2 && !v._autoPause) userPaused = true;
+    });
+    v.addEventListener('play', function () { userPaused = false; });
+    function kick() { if (!userPaused && v.paused) play(v); }
+    ['loadedmetadata', 'loadeddata', 'canplay'].forEach(function (ev) { v.addEventListener(ev, kick); });
+    v.addEventListener('error', function () {
+      if (tries++ < 2) setTimeout(function () { v.load(); kick(); }, 1500 * tries);
+    });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) kick(); });
+    window.addEventListener('pageshow', kick);
+    if (document.readyState === 'complete') kick(); else window.addEventListener('load', kick);
+    kick();
+  })();
+
+  /* resume visible clips when the page comes back from the back/forward cache */
+  window.addEventListener('pageshow', function (e) {
+    if (!e.persisted) return;
+    $$('.vgroup').forEach(function (g) { if (g._visible) loadGroup(g); });
+  });
 
   /* ---------------- start watching ---------------- */
   $$('.vgroup').forEach(watchGroup);
