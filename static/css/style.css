@@ -333,19 +333,48 @@ details.abstract p{margin:0;padding:0 18px 18px;text-align:justify;hyphens:auto;
 .xmeta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 10px;font-size:14px}
 .xmeta .arrow{color:var(--muted);font-weight:700}
 .xblock{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
+/* several examples in one card: sources on top, transferred below, one column per example */
+.xrows{display:grid;grid-template-columns:16px repeat(var(--n),minmax(0,1fr));grid-template-rows:repeat(5,auto);column-gap:14px;padding:16px}
+.xcol{grid-row:1 / span 5;display:grid;grid-template-rows:subgrid;min-width:0}
+.xc-head,.xc-foot{display:flex;justify-content:center;align-items:center;min-width:0}
+.xc-head{padding-bottom:8px}
+.xc-foot{padding-top:8px}
+.xc-arrow{display:flex;justify-content:center;align-items:center;height:24px}
+.xc-arrow svg{width:12px;height:16px;overflow:visible}
+.xc-arrow path{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.xc-arrow path.shaft{stroke-dasharray:3 3;animation:fxMarch .9s linear infinite}
+.xrows .tile video{aspect-ratio:640/440;object-fit:contain}
+.xrow-lab{grid-column:1;writing-mode:vertical-rl;transform:rotate(180deg);justify-self:center;align-self:center;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.xrow-lab.src{grid-row:2}
+.xrow-lab.tgt{grid-row:4;color:var(--accent-dark)}
 
 /* H2R comparison, two rows: [source → DreamX] / [AdaWorld, VideoWorld2, metrics].
    Column widths follow each video's pixel width so every row has one height. */
-.hr-grid{display:flex;flex-direction:column;gap:14px}
-.hr-top{display:grid;grid-template-columns:minmax(0,854fr) 56px minmax(0,640fr);gap:10px;align-items:center;width:calc(76px + (100% - 24px) * .646);margin:0 auto}   /* sized so both rows share one video height */
-.hr-bottom{display:grid;grid-template-columns:minmax(0,480fr) minmax(0,832fr) minmax(0,1000fr);gap:12px;align-items:stretch}
-.hr-bottom .tile{align-self:center}
-.hr-metrics{display:flex;flex-direction:column;justify-content:center;padding:10px 14px}
-.hr-metrics h4{margin:0;font-size:15px}
-.hr-metrics .sub{font-size:12.5px;color:var(--muted);margin:2px 0 6px}
+/* zero-shot H2R: source → DreamX + table on one row; baselines switch on into the row below.
+   --hr-fixed is the non-video width of the top row, so baseline clips come out at the same height. */
+.hr-grid{--hr-flow:56px;--hr-gap:12px;--hr-tbl:370px;--hr-fixed:calc(var(--hr-flow) + var(--hr-tbl) + 3 * var(--hr-gap));display:flex;flex-direction:column;gap:12px}
+.hr-top{display:grid;grid-template-columns:minmax(0,854fr) var(--hr-flow) minmax(0,640fr) var(--hr-tbl);gap:var(--hr-gap);align-items:center}
+.hr-bottom{display:flex;gap:var(--hr-gap);align-items:flex-start}
+.hr-bottom[hidden],.hr-base[hidden]{display:none}
+.hr-base{flex:none;animation:hrIn .25s ease-out}
+.hr-base[data-k="adaworld"]{width:calc((100% - var(--hr-fixed)) * 480 / 1494)}
+.hr-base[data-k="videoworld2"]{width:calc((100% - var(--hr-fixed)) * 832 / 1494)}
+@keyframes hrIn{from{opacity:0;transform:translateY(-4px)}}
+.hr-metrics{padding:12px 14px}
+.hr-metrics h4{margin:0 0 4px;font-size:15px}
 .hr-metrics table{font-size:14px}
 .hr-metrics th{padding:5px 4px}
-.hr-metrics td{padding:6px 4px}
+.hr-metrics td{padding:7px 4px}
+.hr-toggles{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.hr-toggles .lab{font-size:13.5px;font-weight:700;color:var(--muted);margin-right:2px}
+.tgl{appearance:none;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13.5px;font-weight:700;line-height:1.3;padding:4px 12px 4px 6px;border-radius:999px;cursor:pointer;transition:border-color .15s,color .15s}
+.tgl:hover{border-color:var(--accent);color:var(--accent-dark)}
+.tgl .sw{position:relative;flex:none;width:28px;height:16px;border-radius:999px;background:#CDD3C2;transition:background .15s}
+.tgl .sw::after{content:"";position:absolute;left:2px;top:2px;width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:transform .15s}
+.tgl[aria-pressed="true"]{border-color:var(--accent)}
+.tgl[aria-pressed="true"] .sw{background:var(--accent)}
+.tgl[aria-pressed="true"] .sw::after{transform:translateX(12px)}
+[data-theme="dark"] .tgl:not([aria-pressed="true"]) .sw{background:#3A4232}
 
 /* action-transfer pair */
 .apair{display:grid;grid-template-columns:1fr 64px 1fr;gap:12px;align-items:center;max-width:860px;margin:0 auto}
@@ -479,6 +508,9 @@ footer{padding:36px 0 48px;text-align:center;color:var(--muted);font-size:13.5px
 /* ---------- responsive ---------- */
 @media (max-width:1000px){
   .stats{grid-template-columns:repeat(2,1fr)}
+  .hr-grid{--hr-fixed:calc(var(--hr-flow) + 2 * var(--hr-gap))}
+  .hr-top{grid-template-columns:minmax(0,854fr) var(--hr-flow) minmax(0,640fr)}
+  .hr-metrics{grid-column:1 / -1}
   .data-grid{grid-template-columns:1fr}
   .donut-card{contain:none;display:grid;grid-template-columns:190px 1fr;gap:22px;align-items:center}
   .donut-card .donut{height:auto;flex:none}
@@ -524,15 +556,21 @@ footer{padding:36px 0 48px;text-align:center;color:var(--muted);font-size:13.5px
   .tile .tag.bottom{bottom:6px}
   .tag .kind{font-size:9px;padding:2px 6px;letter-spacing:.05em;white-space:nowrap}
   .row-end{margin-top:8px}
-  /* zero-shot human → robot: no sideways scrolling; DreamX right under the source, baselines below */
-  /* zero-shot H2R on phones: same two rows, metrics drop below the baselines */
-  .hr-grid{gap:8px}
-  .hr-top{grid-template-columns:minmax(0,854fr) 22px minmax(0,640fr);gap:6px;width:100%}
-  .hr-bottom{grid-template-columns:minmax(0,480fr) minmax(0,832fr);gap:6px}
-  .hr-metrics{grid-column:1 / -1;padding:10px}
+  /* zero-shot H2R on phones: source → DreamX, then the table, then any switched-on baselines */
+  .hr-grid{--hr-flow:22px;--hr-gap:6px;gap:8px}
+  .hr-metrics{padding:10px}
   .hr-metrics table{font-size:12.5px}
   .hr-metrics th{padding:5px 3px;font-size:11px}
   .hr-metrics td{padding:6px 3px}
+  .hr-toggles{gap:6px}
+  .hr-toggles .lab{font-size:12.5px}
+  .tgl{font-size:12.5px;padding:3px 10px 3px 5px;gap:6px}
+  .xrows{grid-template-columns:10px repeat(var(--n),minmax(0,1fr));column-gap:6px;padding:10px}
+  .xrows .chip{white-space:normal;text-align:center;justify-content:center;font-size:10.5px;line-height:1.25;padding:2px 7px}
+  .xrows .chip::before{display:none}
+  .xc-head{padding-bottom:6px}.xc-foot{padding-top:6px}
+  .xc-arrow{height:16px}.xc-arrow svg{width:10px;height:12px}
+  .xrow-lab{font-size:8.5px;letter-spacing:.04em}
   /* method steps stay in one row */
   .steps{gap:8px}
   .step{padding:10px}

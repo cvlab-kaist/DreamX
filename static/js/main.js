@@ -106,6 +106,7 @@
      keep all their videos on the first video's clock. */
   function loadGroup(g) {
     $$('video', g).forEach(function (v) {
+      if (v.closest('[hidden]')) return;            /* toggled-off clips stay unloaded */
       if (v.dataset.src && v.getAttribute('src') !== v.dataset.src) { v.src = v.dataset.src; }
       play(v);
     });
@@ -211,7 +212,7 @@
   function chip(c) { return '<span class="chip ' + c[0] + '">' + c[1] + '</span>'; }
   function tile(src, poster, kind, ours) {
     return '<div class="tile' + (ours ? ' ours' : '') + '"><video data-src="' + src + '" poster="' + poster + '" muted loop playsinline preload="none"></video>' +
-      '<div class="tag"><span class="kind' + (ours ? ' ours' : '') + '">' + kind + '</span></div></div>';
+      (kind ? '<div class="tag"><span class="kind' + (ours ? ' ours' : '') + '">' + kind + '</span></div>' : '') + '</div>';
   }
   /* every example gets the same card and the same tile size (tiles letterbox, never crop) */
   function a2aBlock(ex) {
@@ -223,9 +224,24 @@
         tile(base + '_target.mp4', pb + '_target.jpg', 'Transferred', true) +
       '</div></div>';
   }
+  /* several examples: one card, sources on the top row, transferred videos right below */
+  var DOWN = '<div class="xc-arrow" aria-hidden="true"><svg viewBox="0 0 12 16"><path class="shaft" d="M6 1 V12"/><path d="M2 9 L6 14 L10 9"/></svg></div>';
+  function a2aRows(list) {
+    var cols = list.map(function (ex, i) {
+      var base = 'static/videos/any2any/' + ex.id, pb = 'static/posters/' + ex.id;
+      return '<div class="xcol vgroup sync" style="grid-column:' + (i + 2) + '">' +
+        '<div class="xc-head">' + chip(ex.src) + '</div>' +
+        tile(base + '_source.mp4', pb + '_source.jpg', '', false) + DOWN +
+        tile(base + '_target.mp4', pb + '_target.jpg', '', true) +
+        '<div class="xc-foot">' + chip(ex.tgt) + '</div>' +
+      '</div>';
+    }).join('');
+    return '<div class="xblock xrows" style="--n:' + list.length + '">' +
+      '<div class="xrow-lab src">Source</div><div class="xrow-lab tgt">Transferred</div>' + cols + '</div>';
+  }
   $$('[data-a2a]').forEach(function (panel) {
     var list = A2A_EXAMPLES[panel.dataset.a2a] || [];
-    panel.innerHTML = '<div class="xgrid">' + list.map(a2aBlock).join('') + '</div>';
+    panel.innerHTML = list.length > 1 ? a2aRows(list) : '<div class="xgrid">' + list.map(a2aBlock).join('') + '</div>';
   });
 
   /* tabs */
@@ -259,6 +275,18 @@
   hrPills.addEventListener('click', function (e) {
     var b = e.target.closest('.pill'); if (!b) return;
     select(hrPills, b); setHR(b.dataset.task);
+  });
+  /* baselines are off by default; each switch adds its clip to the row below */
+  var hrBottom = $('.hr-bottom', hrGroup);
+  $$('.tgl', hrGroup).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var on = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      var t = $('.hr-base[data-k="' + b.dataset.k + '"]', hrGroup);
+      t.hidden = !on;
+      hrBottom.hidden = !$$('.hr-base', hrGroup).some(function (x) { return !x.hidden; });
+      if (on) { if (hrGroup._visible) loadGroup(hrGroup); } else pause($('video', t));
+    });
   });
 
   /* ---------------- action transfer ---------------- */
