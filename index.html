@@ -181,7 +181,7 @@
 </div>
 
 <div class="wrap intro">
-  <p class="tldr">DreamX reads <b>compact latent actions</b> straight out of a pretrained video diffusion model. The same latent space describes motion for <b>humans and robots alike</b>, so an action can be replayed in a new scene, on a different robot, or executed by a real robot from a human video.</p>
+  <p class="tldr">DreamX reads <b>compact latent actions</b> out of a pretrained video diffusion model: one motion space for <b>humans and robots alike</b>.</p>
 
   <div class="stats">
     <div class="stat"><div class="num">300×</div><div class="lbl">fewer tokens than the video latent, per frame</div></div>
@@ -202,7 +202,7 @@
     <div class="center">
       <p class="eyebrow">Overview</p>
       <h2>One action space for every embodiment</h2>
-      <p class="lead">The video prior handles appearance; a compact latent carries the motion. Encode once, then reuse the action for video transfer, action transfer, or policy learning.</p>
+      <p class="lead">Appearance comes from the video prior; motion lives in a compact latent.</p>
     </div>
     <div class="tfig" role="img" aria-label="DreamX overview: human egocentric and robot videos are encoded by a video diffusion model into a compact, universal latent action space, then decoded for video transfer, action transfer, and a compact latent policy.">
 
@@ -507,7 +507,7 @@
         </svg>
       </div>
     </div>
-    <p class="teaser-cap"><b>DreamX learns a shared action interface from human egocentric and robot videos.</b> Latent actions read out of a pretrained video diffusion model capture motion across changes in embodiment and scene. The same representation transfers motion to a new video, turns human motion into robot actions with no paired training data, and drives a compact latent policy.</p>
+    <p class="teaser-cap"><b>One latent action space from human and robot videos</b>, used for video transfer, human-to-robot action transfer, and a compact latent policy.</p>
   </div>
 
 </section>
@@ -519,12 +519,12 @@
   <div class="wide">
     <p class="eyebrow">Method</p>
     <h2>How DreamX works</h2>
-    <p class="lead">DreamX is built on Cosmos-Predict2.5 (2B). The same pretrained video diffusion backbone, adapted with LoRA, plays two roles: an encoder that reads motion out and a decoder that checks the motion explains the future.</p>
+    <p class="lead">One pretrained video diffusion backbone (Cosmos-Predict2.5, 2B, with LoRA) is both the encoder and the decoder.</p>
 
     <div class="steps">
-      <div class="step"><div class="n">1</div><h3>Read out motion</h3><p>Learnable query tokens are appended to the video tokens and processed by the backbone’s spatiotemporal attention. Four queries per latent frame summarize its dynamics, about 300× fewer tokens than the frame itself.</p></div>
-      <div class="step"><div class="n">2</div><h3>Reconstruct the future</h3><p>A decoder initialized from the same backbone regenerates the future frames from only the first frame and the latent actions. The first frame already supplies appearance, so the latent actions are pushed to carry the motion.</p></div>
-      <div class="step"><div class="n">3</div><h3>Reuse anywhere</h3><p>Swap in a new first frame for video transfer, or a robot state for action transfer. For control, a compact latent policy predicts compressed action codes instead of future video.</p></div>
+      <div class="step"><div class="n">1</div><h3>Read out motion</h3><p>Learnable queries read the video features: 4 tokens per frame, ~300× compression.</p></div>
+      <div class="step"><div class="n">2</div><h3>Reconstruct the future</h3><p>The decoder rebuilds the future from the first frame + latent actions, so the latents carry motion, not appearance.</p></div>
+      <div class="step"><div class="n">3</div><h3>Reuse anywhere</h3><p>New first frame → video transfer. Robot state → actions. Compact codes → policy.</p></div>
     </div>
 
     <div class="mfig">
@@ -647,8 +647,8 @@
           <text class="fig-cap" x="360" y="535">(b) Attention Mechanism</text>
         </svg>
       </figure>
-      <p class="mcap mcap-a"><b>Latent action pretraining.</b> Queries read the backbone’s features into latent actions (yellow). The decoder denoises future video, and robot actions when labels exist, from only the first frame and those latent actions.</p>
-      <p class="mcap mcap-b" id="mask-info"><b>Rows attend to columns.</b> Hover a token group to inspect it.</p>
+      <p class="mcap mcap-a"><b>(a)</b> Queries → latent actions (yellow) → decoder denoises future video and actions.</p>
+      <p class="mcap mcap-b" id="mask-info"><b>(b)</b> Rows attend to columns. Hover a group.</p>
     </div>
   </div>
 </section>
@@ -662,7 +662,7 @@
   <div class="wide">
     <p class="eyebrow">Pretraining data</p>
     <h2>2.19k hours of human and robot video</h2>
-    <p class="lead">DreamX is pretrained on six datasets: egocentric human demonstrations plus four robot embodiments. Human videos carry no action labels; they train the latent actions through video reconstruction alone.</p>
+    <p class="lead">Six datasets of egocentric human and robot video. Human clips need no action labels.</p>
 
     <div class="data-grid">
       <div class="card donut-card">
@@ -688,7 +688,7 @@
   <div class="wide">
     <p class="eyebrow">Quantitative results</p>
     <h2>State of the art on LARYBench</h2>
-    <p class="lead">LARYBench asks whether a latent action keeps enough fine-grained motion to regress end-effector trajectories, and enough semantics to classify motions. DreamX leads every benchmark, and its 32-channel compressed codes (FAE-32) still beat all baselines.</p>
+    <p class="lead">Regressing end-effector trajectories and classifying motions from latent actions. DreamX leads every benchmark; even its 32-d codes (FAE-32) beat all baselines.</p>
 
     <div class="charts" id="lary">
       <div class="card chart">
@@ -742,7 +742,7 @@
   <div class="wide">
     <p class="eyebrow">Motion transfer · video</p>
     <h2>Video transfer</h2>
-    <p class="lead">The frozen encoder turns a source video into latent actions; the frozen decoder replays them from a new first frame. The source motion plays out in the target scene and embodiment, with no paired data and no extra training.</p>
+    <p class="lead">Encode a source video, decode from a new first frame: the motion carries over, the scene and embodiment stay. No paired data, no extra training.</p>
 
     <div class="card">
       <div class="scroll-fig fit" style="--fit:760px">
@@ -831,12 +831,12 @@
           <text class="fig-cap" x="595" y="535">Video transfer</text>
         </svg>
       </div>
-      <p class="mcap"><b>Video transfer.</b> Source latent actions + a target first frame → a new video of the source motion in the target scene and embodiment.</p>
+      <p class="mcap"><b>Video transfer.</b> Source latent actions + target first frame → transferred video.</p>
     </div>
 
     <!-- ---------- any-to-any video transfer ---------- -->
     <h3 class="sub" id="any2any">Any-to-any video transfer</h3>
-    <p class="lead">Across scenes, across robots, from humans to robots, and beyond manipulation.</p>
+    <p class="lead">Across scenes, robots, humans, and beyond manipulation.</p>
 
     <div class="pills" role="tablist" aria-label="Transfer type">
       <button class="pill" role="tab" aria-selected="true"  aria-controls="t-scene" id="tab-scene">Same robot, new scene</button>
@@ -853,7 +853,7 @@
 
     <!-- ---------- zero-shot human → robot (HumanAndRobot) ---------- -->
     <h3 class="sub" id="hr-benchmark">Zero-shot human → robot video transfer</h3>
-    <p class="lead">On the HumanAndRobot benchmark, DreamX follows the human’s motion while keeping the robot and the scene intact. AdaWorld degrades visually, and VideoWorld2 sometimes leaks the human hand into the robot video.</p>
+    <p class="lead">DreamX follows the human’s motion and keeps the robot and scene intact; AdaWorld blurs, VideoWorld2 leaks the hand.</p>
 
     <div class="pills" id="hr-pills" role="tablist" aria-label="Task">
       <button class="pill" aria-selected="true"  data-task="fig05_grab_cube_pull">Grab cube, pull to plate</button>
@@ -917,7 +917,7 @@
   <div class="wide">
     <p class="eyebrow">Motion transfer · action</p>
     <h2>Action transfer</h2>
-    <p class="lead">The same latent actions can be decoded into robot actions instead of pixels. From a human video’s latent actions and only the target robot’s initial state, the decoder’s action branch outputs executable low-level actions, with no paired human–robot data.</p>
+    <p class="lead">Decode the same latent actions into robot actions from the robot’s initial state. No paired human–robot data.</p>
 
     <div class="card">
       <div class="scroll-fig fit" style="--fit:760px">
@@ -1006,12 +1006,12 @@
           <text class="fig-cap" x="595" y="535">Action transfer</text>
         </svg>
       </div>
-      <p class="mcap"><b>Action transfer.</b> Source latent actions + the target robot’s state → executable low-level robot actions.</p>
+      <p class="mcap"><b>Action transfer.</b> Source latent actions + robot state → executable actions.</p>
     </div>
 
     <!-- ---------- human → robot action transfer on a real robot ---------- -->
     <h3 class="sub" id="action-real">Human → robot, on a real robot</h3>
-    <p class="lead">Executed open-loop on a bimanual YAM robot. The robot keeps the stroke order, direction changes, and which arm moves.</p>
+    <p class="lead">Open-loop on a bimanual YAM: stroke order, direction changes, and the moving arm are preserved.</p>
 
     <div class="pills" id="act-pills" role="tablist" aria-label="Example">
       <button class="pill" aria-selected="true"  data-id="fig06_ex1">Letter “N”</button>
@@ -1046,7 +1046,7 @@
   <div class="wide">
     <p class="eyebrow">Analysis</p>
     <h2>Where do latent actions look?</h2>
-    <p class="lead">Query-to-video attention during encoding. The latent-action queries follow the moving hand or gripper over time, for humans, single-arm robots and bimanual robots alike. They read out the action-relevant regions instead of the background.</p>
+    <p class="lead">Latent-action queries follow the moving hand or gripper, for humans and robots alike.</p>
     <div class="pills" id="att-pills" role="tablist" aria-label="Embodiment">
       <button class="pill" role="tab" aria-selected="true"  data-id="human" data-w="1708" data-h="480">Human</button>
       <button class="pill" role="tab" aria-selected="false" data-id="arm1" data-w="1280" data-h="480">Single-arm robot</button>
@@ -1061,7 +1061,7 @@
         </div>
         <div class="att-gauge" aria-hidden="true"><span id="att-gauge-fill"></span></div>
       </div>
-      <figcaption>Input video (left) and the attention of one latent-action query slot overlaid on it (right; brighter means higher), over six native time steps. The bar shows playback progress. Each clip uses a single layer and slot, and colors are scaled per clip.</figcaption>
+      <figcaption>Input (left) and one query slot’s attention (right; brighter = higher).</figcaption>
     </figure>
   </div>
 </section>
@@ -1073,7 +1073,7 @@
   <div class="wide">
     <p class="eyebrow">Control</p>
     <h2>A compact latent policy</h2>
-    <p class="lead">Instead of generating future video, the DreamX policy predicts compact latent-action codes. A variational bottleneck shrinks each 2,048-d latent token to a 32-d code. The policy denoises those codes from the current observation and instruction, and a separate DiT head turns them into robot actions. Human videos supervise the codes; robot data supervises the actions.</p>
+    <p class="lead">Predict compact latent-action codes (2,048-d → 32-d) instead of future video; a DiT head turns them into robot actions.</p>
     <div class="card">
       <div class="scroll-fig fit" style="--fit:600px">
         <svg class="fig-svg" viewBox="1185 0 820 548" role="img" aria-label="Latent policy model: latent actions are compressed into compact codes; the policy predicts these codes and a DiT head predicts actions.">
@@ -1177,7 +1177,7 @@
           <text class="fig-cap" x="1595" y="535">(b) Latent Policy Model</text>
         </svg>
       </div>
-      <p class="mcap"><b>Left:</b> the bottleneck compresses frozen latent actions into compact codes and reconstructs them. <b>Right:</b> the policy denoises compact codes (yellow) from text and observation, while the Action DiT reads the backbone’s latent-action features and predicts low-level actions (blue).</p>
+      <p class="mcap"><b>Left:</b> compress latent actions into codes. <b>Right:</b> denoise codes from text + observation; the Action DiT predicts actions.</p>
     </div>
   </div>
 </section>

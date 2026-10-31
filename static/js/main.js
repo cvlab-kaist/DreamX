@@ -395,11 +395,11 @@
     var PITCH = 42, CELL = 38;
     var GCOL = { v: '#8BA33A', q: '#C99A1E', a: '#5D7FC4' };
     var DESC = {
-      'enc-v': '<b>Encoder · video tokens</b> attend to all video tokens and never to the queries, so the pretrained backbone sees the clip as usual.',
-      'enc-q': '<b>Encoder · latent-action queries</b> are frame-causal: query group Q<sub>g</sub> reads frames V<sub>0</sub>…V<sub>g</sub>, and attends to every query.',
-      'dec-v': '<b>Decoder · video tokens</b> read all video tokens plus the latent-action prefix: frame V<sub>t</sub> sees Q<sub>0</sub>…Q<sub>t</sub>.',
-      'dec-q': '<b>Decoder · latent actions</b> are pure conditioning: each query attends only to itself.',
-      'dec-a': '<b>Decoder · action tokens</b> read the latent-action prefix (A<sub>m</sub> sees Q<sub>0</sub>…Q<sub>m</sub>) and all action tokens, but never the video.'
+      'enc-v': '<b>Encoder · video:</b> attends to video only.',
+      'enc-q': '<b>Encoder · queries:</b> Q<sub>g</sub> reads frames up to V<sub>g</sub> and all queries.',
+      'dec-v': '<b>Decoder · video:</b> V<sub>t</sub> reads all video and Q<sub>0…t</sub>.',
+      'dec-q': '<b>Decoder · latent actions:</b> condition only, attend to themselves.',
+      'dec-a': '<b>Decoder · actions:</b> A<sub>m</sub> reads Q<sub>0…m</sub> and all actions, never video.'
     };
     var groups = [];   /* {key, type, r0, r1, rows:[cells[]], box, mtx} */
     var matrices = {}; /* key -> all rows (array of cell arrays) */
