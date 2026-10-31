@@ -202,7 +202,7 @@
     <div class="center">
       <p class="eyebrow">Overview</p>
       <h2>One action space for every embodiment</h2>
-      <p class="lead">Appearance comes from the video prior; motion lives in a compact latent.</p>
+      <p class="lead">DreamX turns a pretrained video diffusion model into a latent action learner. Its encoder reads compact latent actions out of human and robot videos while the video prior takes care of appearance, so the latents capture motion alone. The same latent actions then drive video transfer, human-to-robot action transfer, and a compact latent policy.</p>
     </div>
     <div class="tfig" role="img" aria-label="DreamX overview: human egocentric and robot videos are encoded by a video diffusion model into a compact, universal latent action space, then decoded for video transfer, action transfer, and a compact latent policy.">
 
@@ -362,7 +362,7 @@
           <!-- motion: latent actions feed the decoder -->
           <path class="fx-march-slow" d="M1065.5 572.6 V741" stroke="#D4A90C" stroke-width="3" fill="none" marker-end="url(#ah-gold)"/>
           <rect x="1045" y="596.8" width="41" height="120.8" rx="11.5" fill="#D4A90C" fill-opacity=".78"/>
-          <text x="1065.5" y="657.2" font-size="29" font-weight="700" fill="#fff" text-anchor="middle" dominant-baseline="central" transform="rotate(-90 1065.5 657.2)">Motion</text>
+          <text x="1065.5" y="666.2" font-size="29" font-weight="700" fill="#fff" text-anchor="middle" transform="rotate(-90 1065.5 657.2)">Motion</text>
 
           <!-- decoder input: first frame (appearance) + noisy video + latent actions + noisy actions -->
           <image href="static/images/teaser/tok_first.jpg" x="763.5" y="747.8" width="72.5" height="55.6" preserveAspectRatio="xMidYMid slice" clip-path="url(#cp-tok-0)"/>
@@ -507,7 +507,6 @@
         </svg>
       </div>
     </div>
-    <p class="teaser-cap"><b>One latent action space from human and robot videos</b>, used for video transfer, human-to-robot action transfer, and a compact latent policy.</p>
   </div>
 
 </section>
@@ -519,7 +518,7 @@
   <div class="wide">
     <p class="eyebrow">Method</p>
     <h2>How DreamX works</h2>
-    <p class="lead">One pretrained video diffusion backbone (Cosmos-Predict2.5, 2B, with LoRA) is both the encoder and the decoder.</p>
+    <p class="lead">One pretrained video diffusion backbone is both the encoder and the decoder.</p>
 
     <div class="steps">
       <div class="step"><div class="n">1</div><h3>Read out motion</h3><p>Learnable queries read the video features: 4 tokens per frame, ~300× compression.</p></div>
@@ -688,7 +687,7 @@
   <div class="wide">
     <p class="eyebrow">Quantitative results</p>
     <h2>State of the art on LARYBench</h2>
-    <p class="lead">Regressing end-effector trajectories and classifying motions from latent actions. DreamX leads every benchmark; even its 32-d codes (FAE-32) beat all baselines.</p>
+    <p class="lead">Regressing end-effector trajectories and classifying motions from latent actions. DreamX leads every benchmark.</p>
 
     <div class="charts" id="lary">
       <div class="card chart">
@@ -865,45 +864,30 @@
       <button class="pill" aria-selected="false" data-task="fig11_writing">Write with marker</button>
     </div>
 
-    <div class="hr-layout">
-      <div class="xblock vgroup sync hr-vids" id="hr-group">
-        <div class="cmp-scroll">
-          <div class="hr-rows">
-            <div class="hr-row">
-              <span class="hr-lbl">Source</span>
-              <div class="hr-src">
-                <div class="tile"><video data-k="human" width="854" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">Human</span></div></div>
-              </div>
-            </div>
-            <div class="hr-row hr-arrow" aria-hidden="true">
-              <span></span>
-              <div class="hr-down"><svg viewBox="0 0 14 22"><path d="M7 2 V15"/><path class="head" d="M2 11 L7 18 L12 11"/></svg></div>
-            </div>
-            <div class="hr-row">
-              <span class="hr-lbl">Generated</span>
-              <div class="cmp-gen">
-                <div class="tile"><video data-k="adaworld" width="480" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">AdaWorld</span></div></div>
-                <div class="tile"><video data-k="videoworld2" width="832" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">VideoWorld2</span></div></div>
-                <div class="tile ours"><video data-k="ours" width="640" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind ours">DreamX (ours)</span></div></div>
-              </div>
-            </div>
+    <div class="hr-split vgroup sync" id="hr-group">
+      <div class="hr-left">
+        <p class="hr-colhead">Source</p>
+        <div class="tile hr-src-tile"><video data-k="human" width="854" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">Human</span></div></div>
+  <div class="card hr-metrics">
+          <h4>HumanAndRobot benchmark</h4>
+          <div class="sub">↓ lower is better · ↑ higher is better</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Method</th><th>FVD ↓</th><th>LPIPS ↓</th><th>PSNR ↑</th><th>SSIM ↑</th></tr></thead>
+              <tbody>
+                <tr><td>AdaWorld</td><td>170.19</td><td>0.344</td><td>22.95</td><td>0.846</td></tr>
+                <tr><td>VideoWorld2</td><td>241.92</td><td>0.299</td><td>22.53</td><td>0.881</td></tr>
+                <tr class="ours"><td>DreamX</td><td>57.44</td><td>0.179</td><td>26.52</td><td>0.917</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
-
-      <div class="card hr-metrics">
-        <h4>HumanAndRobot benchmark</h4>
-        <div class="sub">↓ lower is better · ↑ higher is better</div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th>Method</th><th>FVD ↓</th><th>LPIPS ↓</th><th>PSNR ↑</th><th>SSIM ↑</th></tr></thead>
-            <tbody>
-              <tr><td>AdaWorld</td><td>170.19</td><td>0.344</td><td>22.95</td><td>0.846</td></tr>
-              <tr><td>VideoWorld2</td><td>241.92</td><td>0.299</td><td>22.53</td><td>0.881</td></tr>
-              <tr class="ours"><td>DreamX</td><td>57.44</td><td>0.179</td><td>26.52</td><td>0.917</td></tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="hr-right">
+        <p class="hr-colhead">Zero-shot transfer</p>
+        <div class="tile ours"><video data-k="ours" width="640" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind ours">DreamX (ours)</span></div></div>
+        <div class="tile"><video data-k="adaworld" width="480" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">AdaWorld</span></div></div>
+        <div class="tile"><video data-k="videoworld2" width="832" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">VideoWorld2</span></div></div>
       </div>
     </div>
 

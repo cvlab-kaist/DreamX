@@ -334,20 +334,12 @@ details.abstract p{margin:0;padding:0 18px 18px;text-align:justify;hyphens:auto;
 .xblock{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
 [data-a2a]{max-width:1000px;margin:0 auto}
 
-/* H2R comparison: videos on the left (source row, generated row; vertical row labels), metrics on the right */
-.hr-layout{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(380px,1fr);gap:20px;align-items:stretch}
-.hr-row{display:grid;grid-template-columns:20px minmax(0,1fr);gap:8px;align-items:center}
-.hr-row + .hr-row{margin-top:10px}
-.hr-row.hr-arrow,.hr-arrow + .hr-row{margin-top:4px}
-.hr-down{justify-self:center;line-height:0}
-.hr-down svg{width:14px;height:22px;overflow:visible}
-.hr-down path{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:4 4;animation:fxMarch .9s linear infinite}
-.hr-down path.head{stroke-dasharray:none;animation:none}
-.hr-lbl{writing-mode:vertical-rl;transform:rotate(180deg);justify-self:center;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
-.hr-src{width:calc((100% - 20px) * .4375);justify-self:center}   /* 854 / (480+832+640): same height as the generated row */
-.cmp-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.cmp-gen{display:grid;grid-template-columns:minmax(0,480fr) minmax(0,832fr) minmax(0,640fr);gap:10px}   /* columns sized by video width so heights match */
-.hr-metrics{display:flex;flex-direction:column;justify-content:center;padding:16px 14px}   /* same height as the video block; title + table centred */
+/* H2R comparison: source + metrics on the left, the three transferred videos stacked on the right */
+.hr-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.62fr);gap:18px;align-items:stretch}
+.hr-left,.hr-right{display:flex;flex-direction:column;gap:10px;min-width:0}
+.hr-colhead{margin:0;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.hr-right .tile video{aspect-ratio:16/10;object-fit:contain}   /* same box for every method; letterboxed, never cropped */
+.hr-metrics{flex:1;display:flex;flex-direction:column;justify-content:center;padding:16px 14px}
 .hr-metrics h4{margin:0;font-size:16px}
 .hr-metrics .sub{font-size:13px;color:var(--muted);margin:2px 0 10px}
 .hr-metrics table{font-size:15px}
@@ -485,10 +477,7 @@ footer{padding:36px 0 48px;text-align:center;color:var(--muted);font-size:13.5px
 
 /* ---------- responsive ---------- */
 @media (max-width:1000px){
-  .hr-layout{grid-template-columns:1fr}
-  .hr-metrics{max-width:520px;width:100%;margin:0 auto}
   .stats{grid-template-columns:repeat(2,1fr)}
-  .steps{grid-template-columns:1fr}
   .data-grid{grid-template-columns:1fr}
   .donut-card{position:static;display:grid;grid-template-columns:190px 1fr;gap:22px;align-items:center}
   .donut-card .legend{margin:0}
@@ -528,12 +517,21 @@ footer{padding:36px 0 48px;text-align:center;color:var(--muted);font-size:13.5px
   .tag .kind{font-size:9px;padding:2px 6px;letter-spacing:.05em;white-space:nowrap}
   .row-end{margin-top:8px}
   /* zero-shot human → robot: no sideways scrolling; DreamX right under the source, baselines below */
-  .hr-rows{min-width:0}
-  .hr-row{grid-template-columns:14px minmax(0,1fr);gap:6px}
-  .hr-lbl{font-size:10px}
-  .hr-src{width:72%}
-  .cmp-gen{grid-template-columns:minmax(0,480fr) minmax(0,832fr);gap:6px}
-  .cmp-gen .tile.ours{order:-1;grid-column:1 / -1;width:72%;justify-self:center}
+  /* zero-shot H2R on phones: source → DreamX → baselines side by side → metrics */
+  .hr-split{display:flex;flex-flow:row wrap;gap:8px}
+  .hr-left,.hr-right{display:contents}
+  .hr-colhead{display:none}
+  .hr-src-tile,.hr-right .tile.ours,.hr-metrics{width:100%}
+  .hr-src-tile{order:1}
+  .hr-right .tile.ours{order:2}
+  .hr-right .tile:not(.ours){order:3;width:calc(50% - 4px)}
+  .hr-metrics{order:4}
+  /* method steps stay in one row */
+  .steps{gap:8px}
+  .step{padding:10px}
+  .step .n{width:24px;height:24px;font-size:13px;margin-bottom:6px}
+  .step h3{font-size:14px}
+  .step p{font-size:12.5px;line-height:1.4}
   .hr-metrics{padding:12px 10px}
   .hr-metrics table{font-size:13px}
   .hr-metrics th{padding:6px 3px;font-size:11px}
