@@ -10,7 +10,7 @@
   /* ---------------- data ---------------- */
   var A2A_EXAMPLES = {
     scene: [
-      { id: 'fig04_ex1', src: ['r', 'Bridge WidowX'], tgt: ['r', 'Bridge WidowX · different kitchen'] },
+      { id: 'fig04_ex1', src: ['r', 'Bridge WidowX'], tgt: ['r', 'Bridge WidowX'] },
       { id: 'fig10_ex1', src: ['r', 'Bridge WidowX'], tgt: ['r', 'Bridge WidowX'] },
       { id: 'fig10_ex2', src: ['r', 'Bridge WidowX'], tgt: ['r', 'Bridge WidowX'] }
     ],
@@ -276,17 +276,13 @@
     var b = e.target.closest('.pill'); if (!b) return;
     select(hrPills, b); setHR(b.dataset.task);
   });
-  /* baselines are off by default; each switch adds its clip to the row below */
-  var hrBottom = $('.hr-bottom', hrGroup);
-  $$('.tgl', hrGroup).forEach(function (b) {
-    b.addEventListener('click', function () {
-      var on = b.getAttribute('aria-pressed') !== 'true';
-      b.setAttribute('aria-pressed', on ? 'true' : 'false');
-      var t = $('.hr-base[data-k="' + b.dataset.k + '"]', hrGroup);
-      t.hidden = !on;
-      hrBottom.hidden = !$$('.hr-base', hrGroup).some(function (x) { return !x.hidden; });
-      if (on) { if (hrGroup._visible) loadGroup(hrGroup); } else pause($('video', t));
-    });
+  /* baselines are off by default; the switch adds both clips in the row below */
+  var hrBottom = $('.hr-bottom', hrGroup), hrTgl = $('.tgl', hrGroup);
+  hrTgl.addEventListener('click', function () {
+    var on = hrTgl.getAttribute('aria-pressed') !== 'true';
+    hrTgl.setAttribute('aria-pressed', on ? 'true' : 'false');
+    hrBottom.hidden = !on;
+    if (on) { if (hrGroup._visible) loadGroup(hrGroup); } else $$('video', hrBottom).forEach(pause);
   });
 
   /* ---------------- action transfer ---------------- */

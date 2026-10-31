@@ -883,15 +883,13 @@
           </div>
         </div>
       </div>
-      <!-- baselines: off by default, each switch adds its clip to the row below -->
-      <div class="hr-toggles" role="group" aria-label="Show baselines">
-        <span class="lab">Compare with</span>
-        <button type="button" class="tgl" aria-pressed="false" data-k="adaworld"><span class="sw" aria-hidden="true"></span>AdaWorld</button>
-        <button type="button" class="tgl" aria-pressed="false" data-k="videoworld2"><span class="sw" aria-hidden="true"></span>VideoWorld2</button>
+      <!-- baselines: off by default, the switch adds both clips in the row below -->
+      <div class="hr-toggles">
+        <button type="button" class="tgl" aria-pressed="false"><span class="sw" aria-hidden="true"></span>Show baselines</button>
       </div>
       <div class="hr-bottom" hidden>
-        <div class="tile hr-base" data-k="adaworld" hidden><video data-k="adaworld" width="480" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">AdaWorld</span></div></div>
-        <div class="tile hr-base" data-k="videoworld2" hidden><video data-k="videoworld2" width="832" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">VideoWorld2</span></div></div>
+        <div class="tile hr-base" data-k="adaworld"><video data-k="adaworld" width="480" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">AdaWorld</span></div></div>
+        <div class="tile hr-base" data-k="videoworld2"><video data-k="videoworld2" width="832" height="440" muted loop playsinline preload="none"></video><div class="tag bottom"><span class="kind">VideoWorld2</span></div></div>
       </div>
     </div>
 
