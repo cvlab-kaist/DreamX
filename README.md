@@ -47,7 +47,7 @@ The any-to-any and HumanAndRobot clips are cropped out of the concatenated suppl
 To use clean originals, overwrite the files with the same names. The HumanAndRobot generated outputs still carry a "GENERATED" mark from the source videos.
 
 ## Other TODOs
-Search `index.html` for `TODO` to find the paper/code links and the BibTeX venue.
+Search `index.html` for `TODO` to find the Code button, which still says "soon".
 
 ## Deploy (GitHub Pages)
 This folder is the root of https://github.com/kchyun/DreamX.
