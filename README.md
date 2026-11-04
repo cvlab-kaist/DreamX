@@ -1,6 +1,6 @@
 # DreamX project page
 
-Live site: https://kchyun.github.io/DreamX/
+Live site: https://cvlab-kaist.github.io/DreamX/
 
 Static site, no build step. Open `index.html` locally or serve it with GitHub Pages.
 
