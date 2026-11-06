@@ -25,7 +25,7 @@
       { id: 'fig10_ex6', src: ['h', 'Human (EgoVerse)'], tgt: ['r', 'Bimanual YAM'] }
     ],
     general: [
-      { id: 'fig04_ex4', src: ['h', 'Human hand, open / close'], tgt: ['o', 'Dog in a sunflower field'], note: 'Sample pair from DisMo' }
+      { id: 'fig04_ex4', src: ['h', 'Human hand, open / close'], tgt: ['o', 'Dog in a sunflower field'], note: 'Sample pair from <a href="https://compvis.github.io/DisMo/" target="_blank" rel="noopener">DisMo</a>' }
     ]
   };
 

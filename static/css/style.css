@@ -333,6 +333,8 @@ details.abstract p{margin:0;padding:0 18px 18px;text-align:justify;hyphens:auto;
 .xmeta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 10px;font-size:14px}
 .xmeta .arrow{color:var(--muted);font-weight:700}
 .xnote{margin-top:8px;font-size:12.5px;color:var(--muted)}
+.xnote a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.xnote a:hover{color:var(--accent-dark)}
 .xblock{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
 /* several examples in one card: sources on top, transferred below, one column per example */
 .xrows{display:grid;grid-template-columns:16px repeat(var(--n),minmax(0,1fr));grid-template-rows:repeat(5,auto);column-gap:14px;padding:16px}
