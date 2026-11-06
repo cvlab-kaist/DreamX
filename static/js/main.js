@@ -25,7 +25,7 @@
       { id: 'fig10_ex6', src: ['h', 'Human (EgoVerse)'], tgt: ['r', 'Bimanual YAM'] }
     ],
     general: [
-      { id: 'fig04_ex4', src: ['h', 'Human hand, open / close'], tgt: ['o', 'Dog in a sunflower field'] }
+      { id: 'fig04_ex4', src: ['h', 'Human hand, open / close'], tgt: ['o', 'Dog in a sunflower field'], note: 'Sample pair from DisMo' }
     ]
   };
 
@@ -222,7 +222,7 @@
       '<div class="xpair vgroup sync">' +
         tile(base + '_source.mp4', pb + '_source.jpg', 'Source', false) + FLOW +
         tile(base + '_target.mp4', pb + '_target.jpg', 'Transferred', true) +
-      '</div></div>';
+      '</div>' + (ex.note ? '<div class="xnote">' + ex.note + '</div>' : '') + '</div>';
   }
   /* several examples: one card, sources on the top row, transferred videos right below */
   var DOWN = '<div class="xc-arrow" aria-hidden="true"><svg viewBox="0 0 12 16"><path class="shaft" d="M6 1 V12"/><path d="M2 9 L6 14 L10 9"/></svg></div>';
